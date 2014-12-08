@@ -1,13 +1,13 @@
 
 -- rename sep and split
-function string.sep(str, pattern, exclusive, output)
-	local out, excl, start = output or {}, exclusive and 1 or 0, 1
+function string.sep(str, pattern, exclusive)
+	local out, excl, start = {}, exclusive and 1 or 0, 1
 
 	local splitStart, splitEnd = str:find(pattern)
 
 	while splitStart do
 		out[#out + 1] = str:sub(start, splitStart - excl)
-		start = splitEnd + 1
+		start = splitEnd + 1--pattern:length()
 		splitStart, splitEnd = str:find(pattern, start)
 	end
 
@@ -15,8 +15,8 @@ function string.sep(str, pattern, exclusive, output)
 	return out
 end
 
-function string.split(str, pattern, output)
-	local out = (output or {})
+function string.split(str, pattern)
+	local out = {}
 
 	for w in str:gfind(pattern) do
 		out[#out + 1] = w
@@ -36,6 +36,10 @@ end
 
 function string.substr(str, i, j)
 	return string.sub(str, i or 1, j)
+end
+
+function string.contains(str, pattern)
+	return str:match(pattern)
 end
 
 function string.length(str)
