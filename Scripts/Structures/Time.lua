@@ -1,33 +1,36 @@
 
 class "Time"
 
-function Time:Time(hour, min, pm)
-	if type(hour) == "string" then
-		self:toTime(hour)
-	elseif type(hour) == "Time" then
-		self = Time.fromString(hour)
-	else
-		self.hour = hour
-		self.min = min
-		self.pm = pm
+function Time:Time(str)
+	if type(str) == "string" then
+		self.hour = str:match("%d%d")
+		self.min = str:match(":(%d%d)")
+		self.pm = str:match("[ap]m")
+	elseif type(str) == "Time" then
+		self = str
 	end
 end
 
-function Time.toTime(time, str)
+function Time:between(t1, t2)
 	
 end
 
-function Time.fromString(str)
-	
+function makeTime(t)
+	return table.map(t, function(v) return Time(v) end)
 end
-
---to24 and to12 functions unnecessary for program's use
 
 
 class "Date"
 
-function Date:Date(month, day, year)
-	self.month = month
-	self.day = day
-	self.year = year
+function Date:Date(str)
+	if type(str) == "string" then
+		self.month = str:match("%d%d")
+		self.day = str:match("/(%d%d)")
+	elseif type(str) == "Date" then
+		self = str
+	end
+end
+
+function makeDays(t)
+	return table.map(t, function(v) return Date(v) end)
 end
