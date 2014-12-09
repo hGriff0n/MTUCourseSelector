@@ -1,5 +1,5 @@
-require "Data/HtmlNode"
-require "Data/parser"
+require "Scripts/HTML/HtmlNode"
+require "Scripts/HTML/parser"
 
 -- move to Utilities/Table ???
 	-- convert to table.map ???
@@ -25,6 +25,7 @@ class "HtmlDoc"
 function HtmlDoc:HtmlDoc(htmlString)
 	self.html = parse(htmlString)
 
+	-- non-portable (very strict use case)
 	self.html = table.map(self.html, function(v)
 							  	if type(v) == "string" then
 							  		v = v:remove("<br> *")

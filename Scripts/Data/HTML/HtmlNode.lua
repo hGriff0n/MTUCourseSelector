@@ -53,6 +53,14 @@ function HtmlNode:subNode(n)
 	end
 end
 
+function getContent(v)
+	return v:getContent()
+end
+
+function getContent(v)
+	return v:getContent()
+end
+
 -- [1] = tag, [2] = content, [3] = token, [4] = attr
 -- change to put all attr into a table (not necessary)
 function parseTag(str)

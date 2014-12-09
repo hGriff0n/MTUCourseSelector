@@ -13,6 +13,7 @@ function cleanHTMLTable(t)
 end
 
 function removeEndTags(t)
+	--table.map ???
 	local open = { }
 	
 	for i, v in ipairs(t) do
@@ -58,7 +59,8 @@ end
 
 function data(str)
 	local loc = str:find([===[<CAPTION class="captiontext">Sections Found</CAPTION>]===], 1, true)
-	--<TABLE CLASS="plaintable" SUMMARY="This is table displays line separator at end of the page." WIDTH="100%" cellSpacing=0 cellPadding=0 border=0>]===],
+	local last = str:find("<!%-%-%s*%*+%s*START OF twbkwbis%.P_CloseDoc%s*%*+%s*%-%->", loc + 1)
 
-	return removeUnwantedTags(str:substr(loc, str:find([===[<!-- ** START OF twbkwbis.P_CloseDoc ** -->]===], loc + 1, true) - 1):gsub("[\n\t]",""))
+	-- add exception testing ???
+	return removeUnwantedTags(str:substr(loc, last - 1):gsub("[\n\t]",""))
 end
