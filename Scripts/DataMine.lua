@@ -1,4 +1,4 @@
-require "Scripts/Globals"
+if not mtu then mtu = {} end
 
 function docType(htmldoc)
 	if htmldoc:find("<br>") then

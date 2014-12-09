@@ -1,4 +1,6 @@
 -- Still need to "pretty"-up the return ???
+if not mtu then mtu = {} end
+if not mtu.degrees then mtu.degrees = {} end
 
 -- Need to delay the parsing
 	-- Til after files loaded and class structure is created
