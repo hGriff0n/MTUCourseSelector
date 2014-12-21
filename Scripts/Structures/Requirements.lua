@@ -1,53 +1,50 @@
-require "Scripts/Structures/Various"
-
-class "CourseReq"
-
-function CourseReq:CourseReq(...)
-	self.courses = { ... }
-end
-
-function CourseReq:contains(course)
-	local department = course.department or course[1]
-	local number = course.number or course[2]
-
-	for dep, num in pairs(self.courses) do
-		if dep == department and num == number then
-			return true
-		end
-	end
-
-	return false
-end
-
-
 class "Requirement"
 
-function Requirement:Requirement(pre, co, enrollment_level, semester, year_cond, major, skip)
-	self.pre_requisites = self.parseRequirement(pre)
-	self.co_requisites = self.parseRequirement(co)
+-- add accessor functions that do tests for the data that's not guaranteed to exist
 
-	self.enrollment = Credits[enrollment_level] or enrollment_level
-	self.semester = semester
-	self.year = year_cond
+function Requirement:Requirement(data)
+	table.map(data, function(v) table.condense(v, range(2, #v)) self[reqKey(v[1])] = v[2] end)
 
-	self.major = major
-	self.skip_condition = skip
-end
-
-function Requirement.parseRequirement(courses)
-	local tmp = {}
-
-	for course in ipairs(course) do
-		if type(course) == "table" then
-			tmp[#tmp + 1] = CourseReq(table.unpack(course))
-		else
-			tmp[#tmp + 1] = course
-		end
+	if self.restrictions and type(self.restrictions) ~= "string" then
+		self.restrictions = table.generate(self.restrictions, function(v, i) if i % 2 ~= 0 then return { self.restrictions[i + 1]:trim(), v:find("not") and true or false } end end,
+															  function(i, v) local k = v:sep(" ", true) return k[#k]:sep("%(", true)[1] end)
 	end
 
-	return tmp
+	self.co = self.co and table.map(self.co:sep("and", true), function(v) return v:trim() end)			-- mtu.<>.ifExists(v:trim())
+	self.pre = self.pre and table.map(self.pre:sep("and", true), function(v) return v:trim() end)
+	self.semesters = self.semesters and self.semesters:remove(" "):sep(",", true)
 end
 
-function getRequirements(course, reqs)
+function Requirement:coreqs()
+	return self.co
+end
 
+function Requirement:prereqs()
+	return self.pre
+end
+
+function Requirement:rightClass(credits)
+
+end
+
+function Requirement:rightMajor(majors)
+
+end
+
+function Requirement:testOther(student)
+
+end
+
+
+function reqKey(key)
+	if key:find("[%- ]") then
+		key = key:sep("[%- ]", true)[1]
+	end
+
+	return key:lower()
+end
+
+function siftReqs(v)
+	local s = v[1]
+	return not (s == "Restrictions" or s == "Semesters Offered" or s == "Pre-Requisite(s)" or s == "Co-Requisite(s)")
 end
