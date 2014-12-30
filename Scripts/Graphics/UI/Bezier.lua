@@ -1,26 +1,34 @@
-require "Scripts/Easing/Primitives"
+require "Scripts/UI/Primitives"
 
 --http://cubic-bezier.com/
 --http://devmag.org.za/2011/06/23/bzier-path-algorithms/
 --https://www.desmos.com/calculator/cahqdxeshd
 
-ui.easers.bezier = ui.easers.makeFunctor{
+-- might have to rename / adjust file organization
+
+ui.easers.bezier = ui.makeFunctor{
 	run = function(self, obj, bezier, func, time)
 		--vcurve = SceneCurve.SceneCurveWithCurve(bezier)
 		--scene:addChild(vcurve)
 
-		local fn = func or ui.easers.move.setPos
-		local curve, last = self.bezierFn(self.getAllHandles(bezier))
+		local fn =
+			type(func) == "table" and func or {
+				onExit = func or ui.easers.move.setPos,
+				update = func or ui.easers.move.setPos
+			}
+
+		--local curve, last = self.bezierFn(self.getAllHandles(bezier))
+		local curve, last = self:bezierFn(bezier)
 		local t, scale = 0, 1 / (time or 1)
 
 		self[function(dt, obj)
 			if t >= 1 then
-				fn(obj, last)
+				fn.onExit(obj, last)
 				return true
 			end
 
 			t = t + (dt * scale)
-			fn(obj, curve(t))
+			fn.update(obj, curve(t))
 		end] = obj
 
 		return time or 1
@@ -60,8 +68,11 @@ ui.easers.bezier = ui.easers.makeFunctor{
 	pascalTriangle = { { 1 }, { 1, 1 } },
 
 	-- Generates the bezier algorithm for the given points
-	bezierFn = function(points, last)
-		local pTri = ui.easers.bezier.pascal(#points)
+	bezierFn = function(self, bezier)
+		return self.bezierFunction(self.getAllHandles(bezier))
+	end,
+	bezierFunction = function(points, last)
+		local pascal = ui.easers.bezier.pascal(#points)
 
 		return function(t)
 			local s = 1 - t
@@ -69,9 +80,9 @@ ui.easers.bezier = ui.easers.makeFunctor{
 
 			local x, y, z = 0, 0, 0
 			for i, p in ipairs(points) do
-				x = x + pTri[i] * l * r * p.x
-				y = y + pTri[i] * l * r * p.y
-				z = z + pTri[i] * l * r * p.z
+				x = x + pascal[i] * l * r * p.x
+				y = y + pascal[i] * l * r * p.y
+				z = z + pascal[i] * l * r * p.z
 
 				l = l / s
 				r = r * t

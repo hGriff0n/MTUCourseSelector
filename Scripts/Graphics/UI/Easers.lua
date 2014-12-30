@@ -1,9 +1,9 @@
-require "Scripts/Easing/Bezier"
+require "Scripts/UI/Bezier"
 
 local bezEaser = ui.easers.bezier
 
 -- changes the location of the object
-ui.easers.move = ui.easers.makeFunctor{
+ui.easers.move = ui.makeFunctor{
 	run = function(self, obj, x, y, time)
 		return bezEaser(obj, self.getBezier(obj, x, y), self.setPos, time)
 	end,
@@ -16,7 +16,7 @@ ui.easers.move = ui.easers.makeFunctor{
 }
 
 -- changes the size of the object
-ui.easers.zoom = ui.easers.makeFunctor{
+ui.easers.zoom = ui.makeFunctor{
 	run = function(self, obj, sX, sY, time)
 		return bezEaser(obj, self.getBezier(obj, sX, sY), self.setScale, time)
 	end,
@@ -30,7 +30,7 @@ ui.easers.zoom = ui.easers.makeFunctor{
 }
 
 -- changes the rotation of the object
-ui.easers.rotate = ui.easers.makeFunctor{
+ui.easers.rotate = ui.makeFunctor{
 	run = function(self, obj, angle, time)
 		return bezEaser(obj, self.getBezier(obj, angle), self.setRoll, time)
 	end,
@@ -44,7 +44,7 @@ ui.easers.rotate = ui.easers.makeFunctor{
 }
 
 -- changes the color of the object
-ui.easers.color = ui.easers.makeFunctor{
+ui.easers.color = ui.makeFunctor{
 	run = function(self, obj, r, b, g, time)
 		return bezEaser(obj, self.getBezier(obj, r, b, g), self.setColor, time)
 	end,
@@ -63,7 +63,7 @@ ui.easers.color = ui.easers.makeFunctor{
 }
 
 -- changes the transparency of the object
-ui.easers.fade = ui.easers.makeFunctor{
+ui.easers.fade = ui.makeFunctor{
 	run = function(self, obj, alpha, time)
 		return bezEaser(obj, self.getBezier(obj, alpha), self.setFade, time)
 	end,
@@ -71,6 +71,6 @@ ui.easers.fade = ui.easers.makeFunctor{
 		return bezEaser:create():addPoint2d(obj.color.a, 0):addPoint2d((a > 1 and a / 255 or a), 0):finalize()
 	end,
 	setFade = function(obj, pos)
-		obj.color.a = pos.x
-	end
+		obj.color.a = (type(pos) == "table" and pos.x or pos)
+	end,
 }
