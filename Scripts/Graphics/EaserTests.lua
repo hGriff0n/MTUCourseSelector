@@ -1,5 +1,5 @@
 require "Scripts/Main"
-require "Scripts/Easing/Easers"
+require "Scripts/UI/Easers"
 
 -- testing ground for easers
 
@@ -38,6 +38,7 @@ vcurve = SceneCurve.SceneCurveWithCurve(bezier)
 curve = SceneCurve.SceneCurveWithCurve(bezier)
 
 -- 1905 x 1046: resolution of my screen
+-- 820 x 820: testing resolution
 
 -- improve the granularity of the default operations
 	-- might change [] syntax to [obj] = function from [function] = obj
@@ -140,8 +141,6 @@ ui.easers.oscillate = ui.easers.makeFunctor{
 
 -- pivot (combine bezierMove and rotate)
 -- shear (move the top edge but not the bottom edge)
-
-ui.easers.combine = nil		-- Framework for combining multiple easers in one motion (same num frames)
 
 function ui.easers.bulgeZoom(obj, top, fin, half, time)
 	local curve, last = bezEaser.bezierFn(bezEaser.getAllHandles(ui.easers.zoom.getBezier(obj, top, top)))
